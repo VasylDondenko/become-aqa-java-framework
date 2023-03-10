@@ -1,11 +1,10 @@
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FirstTest {
 
     @Test
     public void firstTest() {
-        Assert.assertTrue(1 == 1);
+        assertEquals(2, 1+1);
     }
-
 }
