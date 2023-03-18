@@ -13,63 +13,9 @@ public class FirstTest {
 
     @BeforeMethod
     public void setUp(ITestContext context) {
-        String name = "Default Name";
-        int age = 255;
+        String name = PropertyUtils.get("name", context);
+        int age = Integer.valueOf(PropertyUtils.get("age", context));
 
-        try {
-            name = System.getProperty("name");
-            age = Integer.valueOf(System.getProperty("age"));
-            System.out.println(name + " " + age + " are set from command line");
-        } catch (Exception e) {
-            System.out.println("No command line arguments are set");
-            name = "Default Name";
-            age = 255;
-        }
-
-        if (name.equals("Default Name")) {
-            try {
-                if (Objects.nonNull(context.getCurrentXmlTest().getParameter("name"))) {
-                    name = context.getCurrentXmlTest().getParameter("name");
-                }
-                System.out.println(name + " is set from the XML file");
-            } catch (Exception e) {
-                System.out.println("Not running using XML");
-                name = "Default Name";
-            }
-            if (age == 255) {
-                try {
-                    if (Objects.nonNull(context.getCurrentXmlTest().getParameter("age"))) {
-                        age = Integer.valueOf(context.getCurrentXmlTest().getParameter("age"));
-                    }
-                    System.out.println(age + " is set from the XML file");
-                } catch (Exception e) {
-                    System.out.println("Not running using XML");
-                    age = 255;
-                }
-                if (name.equals("Default Name")) {
-                    try {
-                        name = PropertyUtils.get("name");
-                        System.out.println(name + ": name value is set");
-                    } catch (Exception e) {
-                        System.out.println(name + " not present in config.properties");
-                        name = "Default Name";
-                    } finally {
-                        if (name.equals("")) {
-                            name = "Default Name";
-                        }
-                    }
-                    if (age == 255) {
-                        try {
-                            age = Integer.valueOf(PropertyUtils.get("age"));
-                            System.out.println(age + ": age value is set");
-                        } catch (Exception e) {
-                            System.out.println(age + " not present in config.properties");
-                            age = 255;
-                        }
-                    }
-                }
-            }
-        }
         user = new User(name, age);
     }
 
