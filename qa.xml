@@ -3,9 +3,11 @@
 <suite name="Suite" data-provider-thread-count="3">
     <test thread-count="1" name="Test" parallel="methods">
 
+        <parameter name="env" value="dev"></parameter>
+        <parameter name="env" value="qa"></parameter>
 
-<!--        <parameter name="name" value="XML_Steve"/>-->
-        <parameter name="age" value="39"/>
+        <parameter name="name" value="XML_Steve_ENV_qa"/>
+        <parameter name="age" value="32"/>
 
         <classes>
             <class name="FirstTest">

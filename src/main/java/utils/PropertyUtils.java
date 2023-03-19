@@ -15,10 +15,8 @@ public final class PropertyUtils {
     private static final Map<String, String> CONFIGMAP = new HashMap<>();
     private static Properties property = new Properties();
 
-    private PropertyUtils() {}
-
     static {
-        try (FileInputStream file = new FileInputStream("src/main/resources/config.properties")) {
+        try (FileInputStream file = new FileInputStream("src/main/resources/" + EnvUtils.env + ".properties")) {
             property.load(file);
             for (Map.Entry<Object, Object> entry : property.entrySet()) {
                 CONFIGMAP.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
@@ -27,6 +25,9 @@ public final class PropertyUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private PropertyUtils() {
     }
 
     public static String get(String key, ITestContext context) {
