@@ -16,6 +16,7 @@ public final class PropertyUtils {
     private static Properties property = new Properties();
 
     static {
+        System.out.println("EnvUtils.env = " + EnvUtils.env);
         try (FileInputStream file = new FileInputStream("src/main/resources/" + EnvUtils.env + ".properties")) {
             property.load(file);
             for (Map.Entry<Object, Object> entry : property.entrySet()) {
