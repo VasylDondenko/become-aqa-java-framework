@@ -1,4 +1,4 @@
-package applications.api;
+package users;
 
 public class GitHubUser {
 

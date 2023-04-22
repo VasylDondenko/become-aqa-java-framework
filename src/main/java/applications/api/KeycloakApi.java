@@ -3,141 +3,195 @@ package applications.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exceptions.*;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.testng.Assert;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import utils.JsonUtils;
 import utils.Property2Utils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KeycloakApi {
 
+    private static final Logger logger = LogManager.getLogger(KeycloakApi.class);
+    private static HttpResponse response;
+    private static String responseBody;
+    private static String realmName = Property2Utils.get("keycloak.realmName");
 
-    private String realmName = Property2Utils.get("keycloak.realmName");
+    private static String baseUrl = Property2Utils.get("keycloak.baseUrl");
+    private static String openidConnectUrl = baseUrl + "/realms/" + realmName + "/protocol/openid-connect";
+    private static String tokenUrl = openidConnectUrl + "/token";
+    private static String introspectUrl = tokenUrl + "/introspect";
+    private static String userInfoUrl = openidConnectUrl + "/userinfo";
+    private static String usersUrl = baseUrl + "/admin/realms/" + realmName + "/users";
 
-    private String baseUrl = Property2Utils.get("keycloak.baseUrl");
-    private String openidConnectUrl = baseUrl + "/realms/" + realmName + "/protocol/openid-connect";
-    private String tokenUrl = openidConnectUrl + "/token";
-    private String introspectUrl = tokenUrl + "/introspect";
-    private String userInfoUrl = openidConnectUrl + "/userinfo";
-    private String usersUrl = baseUrl + "/admin/realms/" + realmName + "/users";
+    private static String username = Property2Utils.get("keycloak.user.username");
+    private static String password = Property2Utils.get("keycloak.user.password");
 
-    private String username = Property2Utils.get("keycloak.user.username");
-    private String password = Property2Utils.get("keycloak.user.password");
+    private static String anotherUser = Property2Utils.get("keycloak.anotherUser.username");
 
-    private String clientId = Property2Utils.get("keycloak.clientID");
-    private String clientSecret = Property2Utils.get("keycloak.clientSecret");
+    private static String clientId = Property2Utils.get("keycloak.clientID");
+    private static String clientSecret = Property2Utils.get("keycloak.clientSecret");
 
-    private String accessToken;
+    private static String accessToken;
+    private static String grantType = "password";
+    private static String expValue;
 
-    private String grantType = "password";
+    private static String[] receiveAccessTokenParams = {
+            "username", username,
+            "password", password,
+            "client_id", clientId,
+            "client_secret", clientSecret,
+            "grant_type", grantType};
 
-    private String expValue;
+    private static String[] getTokenInfoParams = {
+            "client_id", clientId,
+            "client_secret", clientSecret};
 
 
-    public String getUserInfoUrl() {
+    public static String getUserInfoUrl() {
         return userInfoUrl;
     }
 
-    public String getUsersUrl() {
-        return usersUrl;
-    }
-
-    public String getIntrospectUrl() {
-        return introspectUrl;
-    }
-
-    public String getAccessToken() {
+    public static String getAccessToken() {
         return accessToken;
     }
 
-
-    protected void receiveAccessToken() throws IOException {
-        HttpClient client = HttpClientBuilder.create().build();
-
-        HttpPost post = new HttpPost(tokenUrl);
-        List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("username", username));
-        params.add(new BasicNameValuePair("password", password));
-        params.add(new BasicNameValuePair("client_id", clientId));
-        params.add(new BasicNameValuePair("client_secret", clientSecret));
-        params.add(new BasicNameValuePair("grant_type", grantType));
-        post.setEntity(new UrlEncodedFormEntity(params));
-
-        HttpResponse response = client.execute(post);
-
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), 200);
-
-        HttpEntity entity = response.getEntity();
-        String responseBody = EntityUtils.toString(entity);
-        accessToken = responseBody.split("\"")[3];
-        System.out.println("responseBody = " + responseBody);
-        System.out.println("accessToken = " + accessToken);
+    public static String getUsername() {
+        return username;
     }
 
-    protected String getAccessTokenInfo() throws IOException {
-        HttpClient client = HttpClientBuilder.create().build();
-
-        HttpPost post = new HttpPost(getIntrospectUrl());
-        List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("token", accessToken));
-        params.add(new BasicNameValuePair("client_id", clientId));
-        params.add(new BasicNameValuePair("client_secret", clientSecret));
-        post.setEntity(new UrlEncodedFormEntity(params));
-
-        HttpResponse response = client.execute(post);
-
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), 200);
-
-        HttpEntity entity = response.getEntity();
-        String responseBody = EntityUtils.toString(entity);
-
-        System.out.println("responseBody = " + responseBody);
-        System.out.println("accessToken = " + accessToken);
-
-//        Assert.assertFalse(accessToken.isEmpty());
-        return responseBody;
+    public static String getAnotherUser() {
+        return anotherUser;
     }
 
-    protected String getValueFromJsonString(String value, String json) throws JsonProcessingException {
+
+    public static void receiveAccessToken() {
+        logger.info("TRYING TO RECEIVE ACCESS TOKEN");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpPost post = executeHttpPost(receiveAccessTokenParams, tokenUrl);
+        try {
+            response = client.execute(post);
+        } catch (HttpHostConnectException e) {
+            throw new ConnectionException("Failed to connect to server: " + tokenUrl);
+        } catch (IOException e) {
+            throw new HttpRequestException("Failed to execute HTTP request: " + e.getMessage(), e);
+        }
+        logger.debug("HTTP request to obtain access token completed");
+        try {
+            int statusCode = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+            String responseBody = EntityUtils.toString(entity);
+
+            logger.debug("DEBUG response status code = {}", statusCode);
+            logger.debug("DEBUG response body = {}", responseBody);
+
+            if (statusCode == 200) {
+                accessToken = responseBody.split("\"")[3];
+                logger.debug("access token = {}", accessToken);
+
+                if (accessToken == null) {
+                    logger.error("Access token is null");
+                    throw new AccessTokenNullException("Access token is null");
+                }
+            } else {
+                logger.error("Failed to get access token. Response status code = {}", statusCode);
+                throw new AccessTokenException("Failed to get access token. Response status code = " + statusCode);
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to convert entity to String", e);
+        }
+        logger.debug("ACCESS TOKEN IS: {}", accessToken);
+    }
+
+    private static HttpPost executeHttpPost(String[] paramsPairs, String url) {
+        logger.info("EXECUTING POST WITH PARAMETERS");
+        HttpPost post = new HttpPost(url);
+        if (paramsPairs.length % 2 != 0) {
+            throw new IllegalArgumentException("Number of parameters must be even");
+        }
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("token", accessToken));
+        for (int i = 0; i < paramsPairs.length; i += 2) {
+            parameters.add(new BasicNameValuePair(paramsPairs[i], paramsPairs[i + 1]));
+            logger.debug("Parameter added {} = {}", paramsPairs[i], paramsPairs[i + 1]);
+        }
+        try {
+            post.setEntity(new UrlEncodedFormEntity(parameters));
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Failed to encode parameters: {}", e.getMessage());
+            throw new EncodingException("Failed to encode parameters with message: " + e.getMessage(), e);
+        }
+        return post;
+    }
+
+    public static String getAccessTokenInfo() {
+        logger.info("TRYING TO GET ACCESS TOKEN INFO");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpPost post = executeHttpPost(getTokenInfoParams, introspectUrl);
+        try {
+            response = client.execute(post);
+        } catch (HttpHostConnectException e) {
+            throw new ConnectionException("Failed to connect to server: " + introspectUrl);
+        } catch (IOException e) {
+            throw new HttpRequestException("Failed to execute HTTP request: " + e.getMessage(), e);
+        }
+        try {
+            client.execute(post);
+        } catch (HttpHostConnectException e) {
+            throw new ConnectionException("Failed to connect to server: " + tokenUrl);
+        } catch (IOException e) {
+            throw new HttpRequestException("Failed to execute HTTP request: " + e.getMessage(), e);
+        }
+        try {
+            HttpEntity entity = response.getEntity();
+            return EntityUtils.toString(entity);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to convert entity to String", e);
+        }
+    }
+
+    public static String getValueFromJsonString(String value, String json) throws JsonProcessingException {
+        logger.debug("ACCESS TOKEN IS: {}", accessToken);
         ObjectMapper objectMapper = new ObjectMapper();
 
         JsonNode jsonNode = objectMapper.readTree(json);
 
+        logger.debug("json argumetn text: {}", json);
+        logger.debug("JSON Node as text: {}", jsonNode.asText());
+
         expValue = jsonNode.get(value).toString();
 
-        System.out.println("expValue: " + expValue);
+        logger.info("expValue: {}", expValue);
 
         return expValue;
     }
 
-    protected boolean checkValueIsInJsonString(String key, String value, String json) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(json);
-
-        boolean foundValue = false;
-        for (JsonNode node : jsonNode) {
-            String jsonValue = node.get(key).asText();
-            if (jsonValue.equals(value)) {
-                foundValue = true;
-                break;
-            }
-        }
-
-        return foundValue;
-    }
-
-    protected void checkExpirationTime(String expirationTimeStr) throws IOException {
+    public static void checkExpirationTime(String expirationTimeStr) {
+        logger.debug("ACCESS TOKEN IS: {}", accessToken);
         long expirationTime = Long.parseLong(expirationTimeStr);
         Instant now = Instant.now();
         Instant expiration = Instant.ofEpochSecond(expirationTime);
@@ -145,5 +199,48 @@ public class KeycloakApi {
         if (expiration.isBefore(threshold)) {
             receiveAccessToken();
         }
+    }
+
+    public static String getUserInfo() {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet();
+        try {
+            request.setURI(new URI(getUserInfoUrl()));
+        } catch (URISyntaxException e) {
+            throw new ConnectionException("Failed to connect to server: " + getUserInfoUrl());
+        }
+        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken());
+        try {
+            HttpEntity entity = httpClient.execute(request).getEntity();
+            return EntityUtils.toString(entity);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to convert entity to String", e);
+        }
+    }
+
+    public static JSONArray getUsers() {
+        String response;
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet();
+        try {
+            request.setURI(new URI(usersUrl));
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken());
+            HttpResponse httpResponse = httpClient.execute(request);
+            HttpEntity entity = httpResponse.getEntity();
+            response = EntityUtils.toString(entity);
+            logger.debug("http response = {}", httpResponse);
+            logger.debug("entity response = {}", response);
+            return new JSONArray(response);
+        } catch (URISyntaxException e) {
+            logger.error("Bad URL: {}, ", usersUrl);
+            throw new ConnectionException("Failed to connect to server: " + usersUrl);
+        } catch (IOException e) {
+            throw new EncodingException("Failed to encode parameters with message: " + e.getMessage(), e);
+        }
+    }
+
+    public static int countUsers() {
+        return JsonUtils.countObjects(getUsers());
     }
 }
