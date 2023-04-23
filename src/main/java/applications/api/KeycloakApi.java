@@ -20,7 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import utils.JsonUtils;
-import utils.Property2Utils;
+import utils.PropertyUtils;
+import utils.TestContextUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -30,27 +31,26 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KeycloakApi {
-
+public final class KeycloakApi {
     private static final Logger logger = LogManager.getLogger(KeycloakApi.class);
-    private static HttpResponse response;
-    private static String responseBody;
-    private static String realmName = Property2Utils.get("keycloak.realmName");
 
-    private static String baseUrl = Property2Utils.get("keycloak.baseUrl");
+    private static HttpResponse response;
+    private static String realmName = PropertyUtils.get("keycloak.realmName", TestContextUtils.getContext());
+
+    private static String baseUrl = PropertyUtils.get("keycloak.baseUrl", TestContextUtils.getContext());
     private static String openidConnectUrl = baseUrl + "/realms/" + realmName + "/protocol/openid-connect";
     private static String tokenUrl = openidConnectUrl + "/token";
     private static String introspectUrl = tokenUrl + "/introspect";
     private static String userInfoUrl = openidConnectUrl + "/userinfo";
     private static String usersUrl = baseUrl + "/admin/realms/" + realmName + "/users";
 
-    private static String username = Property2Utils.get("keycloak.user.username");
-    private static String password = Property2Utils.get("keycloak.user.password");
+    private static String username = PropertyUtils.get("keycloak.user.username", TestContextUtils.getContext());
+    private static String password = PropertyUtils.get("keycloak.user.password", TestContextUtils.getContext());
 
-    private static String anotherUser = Property2Utils.get("keycloak.anotherUser.username");
+    private static String anotherUser = PropertyUtils.get("keycloak.anotherUser.username", TestContextUtils.getContext());
 
-    private static String clientId = Property2Utils.get("keycloak.clientID");
-    private static String clientSecret = Property2Utils.get("keycloak.clientSecret");
+    private static String clientId = PropertyUtils.get("keycloak.clientID", TestContextUtils.getContext());
+    private static String clientSecret = PropertyUtils.get("keycloak.clientSecret", TestContextUtils.getContext());
 
     private static String accessToken;
     private static String grantType = "password";
@@ -180,7 +180,7 @@ public class KeycloakApi {
 
         JsonNode jsonNode = objectMapper.readTree(json);
 
-        logger.debug("json argumetn text: {}", json);
+        logger.debug("json argument text: {}", json);
         logger.debug("JSON Node as text: {}", jsonNode.asText());
 
         expValue = jsonNode.get(value).toString();

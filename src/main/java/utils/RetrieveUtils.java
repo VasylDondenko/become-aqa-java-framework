@@ -10,8 +10,9 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
-public class RetrieveUtils {
+public final class RetrieveUtils {
 
+    private RetrieveUtils() {}
 
     public static <T> T retrieveResourceFromResponse(HttpResponse response, Class<T> clazz) {
         String jsonFromResponse;

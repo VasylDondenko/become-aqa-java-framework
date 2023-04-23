@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Suite" data-provider-thread-count="3">
+    <test thread-count="1" name="Test" parallel="methods">
+
+        <parameter name="env" value="qa"></parameter>
+        <parameter name="browser" value="CHROME"></parameter>
+        <parameter name="github.username" value="SOMENAME"></parameter>
+
+<!--        <parameter name="github.username" value="VasylDondenko"/>-->
+<!--        <parameter name="github.password" value="GitHub Password"/>-->
+        <parameter name="github.ui.baseUrl" value="https://github.com"/>
+
+        <classes>
+            <class name="ui.LoginTests">
+                <methods>
+                    <include name="testSuccesfullLoginPOM" />
+<!--                    <include name="getAnotherUserInfo" />-->
+<!--                    <include name="getPrivateRepos" />-->
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 public class JsonUtils {
     private static final Logger logger = LogManager.getLogger(JsonUtils.class);
 
+    private JsonUtils() {}
 
     public static boolean isNodePresent(JSONObject json, String node) {
         try {

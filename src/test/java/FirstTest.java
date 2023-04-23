@@ -1,3 +1,4 @@
+import api.base.BaseTest;
 import utils.EnvUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.*;
@@ -6,7 +7,7 @@ import utils.PropertyUtils;
 
 import java.util.Objects;
 
-public class FirstTest {
+public class FirstTest extends BaseTest {
 
     private User user;
 

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class GithubApiClient {
+public final class GithubApiClient {
     private static final Logger logger = LogManager.getLogger(GithubApiClient.class);
 
     public static int countFoundRepos(String searchReposUrl, String repoName) {

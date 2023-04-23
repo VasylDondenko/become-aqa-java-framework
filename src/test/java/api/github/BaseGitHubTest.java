@@ -1,6 +1,6 @@
 package api.github;
 
-import api.BaseTest;
+import api.base.BaseTest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
@@ -27,7 +27,7 @@ public class BaseGitHubTest extends BaseTest {
         username = PropertyUtils.get("github.username", context);
         password = PropertyUtils.get("github.password", context);
         anotherUser = PropertyUtils.get("github.anotherUser", context);
-        baseUrl = PropertyUtils.get("github.baseUrl", context);
+        baseUrl = PropertyUtils.get("github.api.baseUrl", context);
         userUrl = baseUrl + "/users/" + username;
         anotherUserUrl = baseUrl + "/users/" + anotherUser;
         usersUrl = baseUrl + "/users/";

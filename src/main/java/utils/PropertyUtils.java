@@ -53,7 +53,7 @@ public final class PropertyUtils {
         }
     }
 
-    private static String getConfigProperty(String key) {
+    public static String getConfigProperty(String key) {
         String property = CONFIGMAP.get(key);
         if (Objects.nonNull(property)) {
             return property;

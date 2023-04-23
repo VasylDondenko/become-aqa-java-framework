@@ -1,23 +1,25 @@
 package api.github;
 
 import applications.api.GithubApiClient;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 public class GitHubLoginTests extends BaseGitHubTest{
 
     @Test
     public void getUserInfoWithToken() {
-        Assert.assertTrue(GithubApiClient.isUserHasAccessToUserPrivateInfo(userUrl, token));
+        assertTrue(GithubApiClient.isUserHasAccessToUserPrivateInfo(userUrl, token));
     }
 
     @Test
     public void getAnotherUserInfo() {
-        Assert.assertFalse(GithubApiClient.isUserHasAccessToUserPrivateInfo(usersUrl + "sergii-butenko-gl", token));
+        assertFalse(GithubApiClient.isUserHasAccessToUserPrivateInfo(usersUrl + "sergii-butenko-gl", token));
     }
 
     @Test
     public void getPrivateRepos() {
-        Assert.assertTrue(GithubApiClient.countPrivateRepositories(userPrivateRepoUrl, token) > 0);
+        assertTrue(GithubApiClient.countPrivateRepositories(userPrivateRepoUrl, token) > 0);
     }
 }

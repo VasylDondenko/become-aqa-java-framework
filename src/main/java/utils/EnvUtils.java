@@ -2,9 +2,10 @@ package utils;
 
 import java.util.Objects;
 
-public class EnvUtils {
-
+public final class EnvUtils {
     private static String env;
+
+    private EnvUtils() {}
 
     public static void setEnv(String envString) {
         env = envString;
