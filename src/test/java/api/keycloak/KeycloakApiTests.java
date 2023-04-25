@@ -11,16 +11,16 @@ public class KeycloakApiTests extends BaseKeycloakTest{
 
     @Test
     public void checkUserExists() {
-        Assert.assertTrue(StringUtils.isStringContainsWord(KeycloakApi.getUserInfo(), getUsername()));
+        Assert.assertTrue(StringUtils.isStringContainsWord(KeycloakApi.getUserInfo(userInfoUrl), username));
     }
 
     @Test
     public void checkQuantityUsersMoreThanOne() {
-        Assert.assertTrue(countUsers() > 1);
+        Assert.assertTrue(countUsers(usersUrl) > 1);
     }
 
     @Test
     public void checkSpecificUserInUsers() {
-        Assert.assertTrue(StringUtils.isStringContainsWord(KeycloakApi.getUsers().toString(), getAnotherUser()));
+        Assert.assertTrue(StringUtils.isStringContainsWord(KeycloakApi.getUsers(usersUrl).toString(), anotherUser));
     }
 }

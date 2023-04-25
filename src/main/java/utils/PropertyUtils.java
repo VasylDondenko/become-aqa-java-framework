@@ -58,7 +58,7 @@ public final class PropertyUtils {
         if (Objects.nonNull(property)) {
             return property;
         } else {
-            throw new MalformedParametersException("No Properties found. Please check the documentation for instructions to setting up testing data");
+            throw new MalformedParametersException("No '" + key + "' property found. Please check the documentation for instructions to setting up testing data");
         }
     }
 }

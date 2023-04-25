@@ -60,18 +60,16 @@ public final class GithubApiClient {
         }
     }
 
-    public static JSONObject requestWithToken(String url, String token) {
+    public static String requestWithToken(String url, String token) {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet();
         HttpEntity entity;
-        String response;
         try {
             request.setURI(new URI(url));
             request.setHeader(HttpHeaders.AUTHORIZATION, "token " + token);
             request.setHeader(HttpHeaders.ACCEPT, "application/vnd.github.v3+json");
             entity = httpClient.execute(request).getEntity();
-            response = EntityUtils.toString(entity);
-            return new JSONObject(response);
+            return EntityUtils.toString(entity);
         } catch (URISyntaxException e) {
             logger.error("Bad URL: {}, ", url);
             throw new ConnectionException("Failed to connect to server: " + url);
@@ -80,32 +78,20 @@ public final class GithubApiClient {
         }
     }
 
-    public static JSONArray requestJsonArrayWithToken(String url, String token) {
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet();
-        HttpEntity entity;
-        String response;
-        try {
-            request.setURI(new URI(url));
-            request.setHeader(HttpHeaders.AUTHORIZATION, "token " + token);
-            request.setHeader(HttpHeaders.ACCEPT, "application/vnd.github.v3+json");
-            entity = httpClient.execute(request).getEntity();
-            response = EntityUtils.toString(entity);
-            return new JSONArray(response);
-        } catch (URISyntaxException e) {
-            logger.error("Bad URL: {}, ", url);
-            throw new ConnectionException("Failed to connect to server: " + url);
-        } catch (IOException e) {
-            throw new EncodingException("Failed to encode parameters with message: " + e.getMessage(), e);
-        }
+    public static JSONObject convertStringToJsonObject(String json) {
+        return new JSONObject(json);
+    }
+
+    public static JSONArray convertStringToJsonArray(String json) {
+        return new JSONArray(json);
     }
 
     public static boolean isUserHasAccessToUserPrivateInfo(String url, String token) {
-        return JsonUtils.isNodePresent(requestWithToken(url, token), "plan");
+        return JsonUtils.isNodePresent(convertStringToJsonObject(requestWithToken(url, token)), "plan");
     }
 
     public static int countPrivateRepositories(String url, String token) {
-        return JsonUtils.countObjects(requestJsonArrayWithToken(url, token));
+        return JsonUtils.countObjects(convertStringToJsonArray(requestWithToken(url, token)));
     }
 
 

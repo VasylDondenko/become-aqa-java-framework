@@ -20,8 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import utils.JsonUtils;
-import utils.PropertyUtils;
-import utils.TestContextUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,57 +33,11 @@ public final class KeycloakApi {
     private static final Logger logger = LogManager.getLogger(KeycloakApi.class);
 
     private static HttpResponse response;
-    private static String realmName = PropertyUtils.get("keycloak.realmName", TestContextUtils.getContext());
-
-    private static String baseUrl = PropertyUtils.get("keycloak.baseUrl", TestContextUtils.getContext());
-    private static String openidConnectUrl = baseUrl + "/realms/" + realmName + "/protocol/openid-connect";
-    private static String tokenUrl = openidConnectUrl + "/token";
-    private static String introspectUrl = tokenUrl + "/introspect";
-    private static String userInfoUrl = openidConnectUrl + "/userinfo";
-    private static String usersUrl = baseUrl + "/admin/realms/" + realmName + "/users";
-
-    private static String username = PropertyUtils.get("keycloak.user.username", TestContextUtils.getContext());
-    private static String password = PropertyUtils.get("keycloak.user.password", TestContextUtils.getContext());
-
-    private static String anotherUser = PropertyUtils.get("keycloak.anotherUser.username", TestContextUtils.getContext());
-
-    private static String clientId = PropertyUtils.get("keycloak.clientID", TestContextUtils.getContext());
-    private static String clientSecret = PropertyUtils.get("keycloak.clientSecret", TestContextUtils.getContext());
-
     private static String accessToken;
-    private static String grantType = "password";
     private static String expValue;
 
-    private static String[] receiveAccessTokenParams = {
-            "username", username,
-            "password", password,
-            "client_id", clientId,
-            "client_secret", clientSecret,
-            "grant_type", grantType};
 
-    private static String[] getTokenInfoParams = {
-            "client_id", clientId,
-            "client_secret", clientSecret};
-
-
-    public static String getUserInfoUrl() {
-        return userInfoUrl;
-    }
-
-    public static String getAccessToken() {
-        return accessToken;
-    }
-
-    public static String getUsername() {
-        return username;
-    }
-
-    public static String getAnotherUser() {
-        return anotherUser;
-    }
-
-
-    public static void receiveAccessToken() {
+    public static void receiveAccessToken(String[] receiveAccessTokenParams, String tokenUrl) {
         logger.info("TRYING TO RECEIVE ACCESS TOKEN");
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -146,7 +98,7 @@ public final class KeycloakApi {
         return post;
     }
 
-    public static String getAccessTokenInfo() {
+    public static String getAccessTokenInfo(String[] getTokenInfoParams, String introspectUrl, String tokenUrl) {
         logger.info("TRYING TO GET ACCESS TOKEN INFO");
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -190,26 +142,26 @@ public final class KeycloakApi {
         return expValue;
     }
 
-    public static void checkExpirationTime(String expirationTimeStr) {
+    public static void checkExpirationTime(String expirationTimeStr, String[] receiveAccessTokenParams, String tokenUrl) {
         logger.debug("ACCESS TOKEN IS: {}", accessToken);
         long expirationTime = Long.parseLong(expirationTimeStr);
         Instant now = Instant.now();
         Instant expiration = Instant.ofEpochSecond(expirationTime);
         Instant threshold = now.plusSeconds(30);
         if (expiration.isBefore(threshold)) {
-            receiveAccessToken();
+            receiveAccessToken(receiveAccessTokenParams, tokenUrl);
         }
     }
 
-    public static String getUserInfo() {
+    public static String getUserInfo(String userInfoUrl) {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet();
         try {
-            request.setURI(new URI(getUserInfoUrl()));
+            request.setURI(new URI(userInfoUrl));
         } catch (URISyntaxException e) {
-            throw new ConnectionException("Failed to connect to server: " + getUserInfoUrl());
+            throw new ConnectionException("Failed to connect to server: " + userInfoUrl);
         }
-        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken());
+        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         try {
             HttpEntity entity = httpClient.execute(request).getEntity();
             return EntityUtils.toString(entity);
@@ -218,14 +170,14 @@ public final class KeycloakApi {
         }
     }
 
-    public static JSONArray getUsers() {
+    public static JSONArray getUsers(String usersUrl) {
         String response;
 
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet();
         try {
             request.setURI(new URI(usersUrl));
-            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken());
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
             HttpResponse httpResponse = httpClient.execute(request);
             HttpEntity entity = httpResponse.getEntity();
             response = EntityUtils.toString(entity);
@@ -240,7 +192,7 @@ public final class KeycloakApi {
         }
     }
 
-    public static int countUsers() {
-        return JsonUtils.countObjects(getUsers());
+    public static int countUsers(String usersUrl) {
+        return JsonUtils.countObjects(getUsers(usersUrl));
     }
 }
