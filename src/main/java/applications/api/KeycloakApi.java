@@ -142,7 +142,8 @@ public final class KeycloakApi {
         return expValue;
     }
 
-    public static void checkExpirationTime(String expirationTimeStr, String[] receiveAccessTokenParams, String tokenUrl) {
+    //TODO Use refresh token strategy
+    public static void getNewAccessTokenIfExpired(String expirationTimeStr, String[] receiveAccessTokenParams, String tokenUrl) {
         logger.debug("ACCESS TOKEN IS: {}", accessToken);
         long expirationTime = Long.parseLong(expirationTimeStr);
         Instant now = Instant.now();
@@ -193,6 +194,7 @@ public final class KeycloakApi {
     }
 
     public static int countUsers(String usersUrl) {
-        return JsonUtils.countObjects(getUsers(usersUrl));
+        JSONArray users = getUsers(usersUrl);
+        return JsonUtils.countObjects(users);
     }
 }

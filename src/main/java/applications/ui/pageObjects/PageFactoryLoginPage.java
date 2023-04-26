@@ -22,7 +22,7 @@ public final class PageFactoryLoginPage extends BasePage {
 
 
     public void goToLoginPage() {
-        driver.get(PropertyUtils.get("github.ui.baseUrl", testContext) + "/login");
+        driver.get(PropertyUtils.get("github.ui.baseUrl") + "/login");
     }
 
     public void setUsername(String username) {

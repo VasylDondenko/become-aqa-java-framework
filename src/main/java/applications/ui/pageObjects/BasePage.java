@@ -7,8 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.ITestContext;
-import utils.TestContextUtils;
 import utils.TimeoutUtils;
 
 import java.time.Duration;
@@ -17,12 +15,11 @@ public class BasePage {
     private static final Logger logger = LogManager.getLogger(BasePage.class);
     protected WebDriver driver;
     protected WebDriverWait wait;
-    protected ITestContext testContext;
 
     public BasePage(WebDriver driver) {
+        //TODO Use driver instantly without providing in every Page and Test that is using Page object creation
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(TimeoutUtils.getTimeOut()));
-        testContext = TestContextUtils.getContext();
     }
 
     protected String getTitle() {

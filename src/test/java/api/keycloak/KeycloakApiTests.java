@@ -1,26 +1,33 @@
 package api.keycloak;
 
 import applications.api.KeycloakApi;
+import configs.APIConfigInitializer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import utils.PropertyUtils;
 import utils.StringUtils;
 
-import static applications.api.KeycloakApi.*;
+import static applications.api.KeycloakApi.countUsers;
 
 public class KeycloakApiTests extends BaseKeycloakTest{
+    private String realm = PropertyUtils.get("keycloak.realmName");
 
     @Test
     public void checkUserExists() {
-        Assert.assertTrue(StringUtils.isStringContainsWord(KeycloakApi.getUserInfo(userInfoUrl), username));
+        String userInfo = KeycloakApi.getUserInfo(APIConfigInitializer.getUserInfoUrl(realm));
+
+        Assert.assertTrue(StringUtils.isStringContainsWord(userInfo, PropertyUtils.get("keycloak.user.username")));
     }
 
     @Test
     public void checkQuantityUsersMoreThanOne() {
-        Assert.assertTrue(countUsers(usersUrl) > 1);
+        Assert.assertTrue(countUsers(APIConfigInitializer.getUsersUrl(realm)) > 1);
     }
 
     @Test
     public void checkSpecificUserInUsers() {
-        Assert.assertTrue(StringUtils.isStringContainsWord(KeycloakApi.getUsers(usersUrl).toString(), anotherUser));
+        String users = KeycloakApi.getUsers(APIConfigInitializer.getUsersUrl(realm)).toString();
+
+        Assert.assertTrue(StringUtils.isStringContainsWord(users, PropertyUtils.get("keycloak.anotherUser.username")));
     }
 }

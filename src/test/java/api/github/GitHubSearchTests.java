@@ -12,7 +12,6 @@ import static org.testng.Assert.assertTrue;
 
 public class GitHubSearchTests extends BaseGitHubTest {
 
-
     @Test
     public void testRandomRepositoryNameDoesNotFoundOnGitHub() {
         assertEquals(GithubApiClient.countFoundRepos(searchReposUrl, randomName), 0);

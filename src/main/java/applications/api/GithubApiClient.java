@@ -23,6 +23,8 @@ import java.net.URISyntaxException;
 public final class GithubApiClient {
     private static final Logger logger = LogManager.getLogger(GithubApiClient.class);
 
+    private GithubApiClient(){}
+
     public static int countFoundRepos(String searchReposUrl, String repoName) {
         return getIntFromJson(searchRepo(searchReposUrl, repoName), "total_count");
     }

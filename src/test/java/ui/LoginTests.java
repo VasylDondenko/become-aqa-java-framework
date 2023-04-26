@@ -3,18 +3,17 @@ package ui;
 import applications.ui.pageObjects.HomePage;
 import applications.ui.pageObjects.LoginPage;
 import applications.ui.pageObjects.PageFactoryLoginPage;
+import configs.UIConfigInitializer;
 import org.testng.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.Test;
-import utils.PropertyUtils;
 
 public class LoginTests extends BaseUiTest {
 
     @Test
-    public void testSuccesfullLoginPOM(ITestContext testContext) {
+    public void testSuccesfullLoginPOM() {
         new LoginPage(driver)
-                .setUsername(PropertyUtils.get("github.username", testContext))
-                .setPassword(PropertyUtils.get("github.password", testContext))
+                .setUsername(UIConfigInitializer.getGithubUsername())
+                .setPassword(UIConfigInitializer.getGithubPassword())
                 .clickCommit();
 
         HomePage homePage = new HomePage(driver)
@@ -24,26 +23,34 @@ public class LoginTests extends BaseUiTest {
     }
 
     @Test
-    public void testSignOut(ITestContext testContext) {
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.setUsername(PropertyUtils.get("github.username", testContext));
-        loginPage.setPassword(PropertyUtils.get("github.password", testContext));
-        loginPage.clickCommit();
+    public void testSignOut() {
+        new LoginPage(driver)
+                .setUsername(UIConfigInitializer.getGithubUsername())
+                .setPassword(UIConfigInitializer.getGithubPassword())
+                .clickCommit();
 
         HomePage homePage = new HomePage(driver);
         homePage.clickMenuBtn();
+
         Assert.assertEquals(new HomePage(driver).getUserName(), "VasylDondenko");
+
         homePage.clickSignOunBtn();
+
         Assert.assertEquals(homePage.getTitle(), "GitHub: Let’s build from here · GitHub");
     }
 
     @Test
-    public void testSuccessfulLoginPageFactory(ITestContext testContext) {
+    public void testSuccessfulLoginPageFactory() {
         PageFactoryLoginPage pageFactoryLoginPage = new PageFactoryLoginPage(driver);
         pageFactoryLoginPage.goToLoginPage();
-        pageFactoryLoginPage.setUsername(PropertyUtils.get("github.username", testContext));
-        pageFactoryLoginPage.setPassword(PropertyUtils.get("github.password", testContext));
+        pageFactoryLoginPage.setUsername(UIConfigInitializer.getGithubUsername());
+        pageFactoryLoginPage.setPassword(UIConfigInitializer.getGithubPassword());
         pageFactoryLoginPage.clickCommit();
+
+        HomePage homePage = new HomePage(driver)
+                .clickMenuBtn();
+
+        Assert.assertEquals(homePage.getUserName(), "VasylDondenko");
     }
 
 }

@@ -1,7 +1,5 @@
 package utils;
 
-import org.testng.ITestContext;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.MalformedParametersException;
@@ -31,21 +29,12 @@ public final class PropertyUtils {
     private PropertyUtils() {
     }
 
-    public static String get(String key, ITestContext context) {
-        return getSystemProperty(key, context);
+    public static String get(String key) {
+        return getSystemProperty(key);
     }
 
-    private static String getSystemProperty(String key, ITestContext context) {
+    private static String getSystemProperty(String key) {
         String property = System.getProperty(key);
-        if (Objects.isNull(property)) {
-            return getXmlProperty(key, context);
-        } else {
-            return property;
-        }
-    }
-
-    private static String getXmlProperty(String key, ITestContext context) {
-        String property = context.getCurrentXmlTest().getParameter(key);
         if (Objects.isNull(property)) {
             return getConfigProperty(key);
         } else {

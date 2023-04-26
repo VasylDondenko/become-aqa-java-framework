@@ -23,11 +23,11 @@ public class BaseGitHubTest extends BaseTest {
 
     @BeforeClass
     public void setUp(ITestContext context) {
-        token = PropertyUtils.get("github.token", context);
-        username = PropertyUtils.get("github.username", context);
-        password = PropertyUtils.get("github.password", context);
-        anotherUser = PropertyUtils.get("github.anotherUser", context);
-        baseUrl = PropertyUtils.get("github.api.baseUrl", context);
+        token = PropertyUtils.get("github.token");
+        username = PropertyUtils.get("github.username");
+        password = PropertyUtils.get("github.password");
+        anotherUser = PropertyUtils.get("github.anotherUser");
+        baseUrl = PropertyUtils.get("github.api.baseUrl");
         userUrl = baseUrl + "/users/" + username;
         anotherUserUrl = baseUrl + "/users/" + anotherUser;
         usersUrl = baseUrl + "/users/";

@@ -17,7 +17,7 @@ public final class LoginPage extends BasePage {
 
     public LoginPage(WebDriver driver) {
         super(driver);
-        driver.get(PropertyUtils.get("github.ui.baseUrl", testContext) + "/login");
+        driver.get(PropertyUtils.get("github.ui.baseUrl") + "/login");
     }
 
 

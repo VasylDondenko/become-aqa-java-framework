@@ -1,69 +1,35 @@
 package api.keycloak;
 
 import api.base.BaseTest;
+import configs.APIConfigInitializer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import utils.PropertyUtils;
-import utils.TestContextUtils;
 
 import java.io.IOException;
 
-import static applications.api.KeycloakApi.*;
+import static applications.api.KeycloakApi.getAccessTokenInfo;
+import static applications.api.KeycloakApi.receiveAccessToken;
+import static applications.api.KeycloakApi.getValueFromJsonString;
+import static applications.api.KeycloakApi.getNewAccessTokenIfExpired;
 
 public class BaseKeycloakTest extends BaseTest {
-    private static String realmName;
+    String realm = PropertyUtils.get("keycloak.realmName");
 
-    protected static String baseUrl;
-    protected static String openidConnectUrl;
-    protected static String tokenUrl;
-    protected static String introspectUrl;
-    protected static String userInfoUrl;
-    protected static String usersUrl;
-
-    protected static String username;
-    protected static String password;
-
-    protected static String anotherUser;
-
-    protected static String clientId;
-    protected static String clientSecret;
-
-    protected static String grantType = "password";
-
-    protected static String[] receiveAccessTokenParams;
-
-    protected static String[] getTokenInfoParams;
 
     @BeforeClass
     public void setUpClass() {
-        realmName = PropertyUtils.get("keycloak.realmName", TestContextUtils.getContext());
-        baseUrl = PropertyUtils.get("keycloak.baseUrl", TestContextUtils.getContext());
-        openidConnectUrl = baseUrl + "/realms/" + realmName + "/protocol/openid-connect";
-        tokenUrl = openidConnectUrl + "/token";
-        introspectUrl = tokenUrl + "/introspect";
-        userInfoUrl = openidConnectUrl + "/userinfo";
-        usersUrl = baseUrl + "/admin/realms/" + realmName + "/users";
-        username = PropertyUtils.get("keycloak.user.username", TestContextUtils.getContext());
-        password = PropertyUtils.get("keycloak.user.password", TestContextUtils.getContext());
-        anotherUser = PropertyUtils.get("keycloak.anotherUser.username", TestContextUtils.getContext());
-        clientId = PropertyUtils.get("keycloak.clientID", TestContextUtils.getContext());
-        clientSecret = PropertyUtils.get("keycloak.clientSecret", TestContextUtils.getContext());
-
-        receiveAccessTokenParams = new String[] {
-                "username", username,
-                "password", password,
-                "client_id", clientId,
-                "client_secret", clientSecret,
-                "grant_type", grantType};
-        getTokenInfoParams = new String[] {
-                "client_id", clientId,
-                "client_secret", clientSecret};
-
-        receiveAccessToken(receiveAccessTokenParams, tokenUrl);
+        receiveAccessToken(
+                APIConfigInitializer.getAccessTokenGetParams(),
+                APIConfigInitializer.getTokenUrl(realm));
     }
 
     @BeforeMethod
     public void setUp() throws IOException {
-        checkExpirationTime(getValueFromJsonString("exp", getAccessTokenInfo(getTokenInfoParams, introspectUrl, tokenUrl)), getTokenInfoParams, tokenUrl);
+        String[] tokenInfoParameters = APIConfigInitializer.getTokenInfoParams();
+        String tokenUrl = APIConfigInitializer.getTokenUrl(PropertyUtils.get("keycloak.realmName"));
+        String accessTokenInfo = getAccessTokenInfo(tokenInfoParameters, APIConfigInitializer.getIntrospectUrl(realm), tokenUrl);
+        String expirationTime = getValueFromJsonString("exp", accessTokenInfo);
+        getNewAccessTokenIfExpired(expirationTime, tokenInfoParameters, tokenUrl);
     }
 }

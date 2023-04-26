@@ -1,8 +1,7 @@
 import api.base.BaseTest;
-import utils.EnvUtils;
-import org.testng.ITestContext;
 import org.testng.annotations.*;
 import users.User;
+import utils.EnvUtils;
 import utils.PropertyUtils;
 
 import java.util.Objects;
@@ -13,10 +12,10 @@ public class FirstTest extends BaseTest {
 
     @Parameters({"env"})
     @BeforeMethod
-    public void setUp(@Optional("dev") String env, ITestContext context) {
+    public void setUp(@Optional("dev") String env) {
         EnvUtils.setEnv(env);
-        String name = PropertyUtils.get("name", context);
-        int age = Integer.valueOf(PropertyUtils.get("age", context));
+        String name = PropertyUtils.get("name");
+        int age = Integer.valueOf(PropertyUtils.get("age"));
 
         user = new User(name, age);
     }

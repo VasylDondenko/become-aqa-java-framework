@@ -5,7 +5,7 @@
 
         <parameter name="env" value="qa"></parameter>
         <parameter name="browser" value="CHROME"></parameter>
-        <parameter name="github.username" value="SOMENAME"></parameter>
+<!--        <parameter name="github.username" value="SOMENAME"></parameter>-->
 
 <!--        <parameter name="github.username" value="VasylDondenko"/>-->
 <!--        <parameter name="github.password" value="GitHub Password"/>-->
@@ -15,8 +15,8 @@
             <class name="ui.LoginTests">
                 <methods>
                     <include name="testSuccesfullLoginPOM" />
-<!--                    <include name="getAnotherUserInfo" />-->
-<!--                    <include name="getPrivateRepos" />-->
+                    <include name="testSignOut" />
+                    <include name="testSuccessfulLoginPageFactory" />
                 </methods>
             </class>
         </classes>
