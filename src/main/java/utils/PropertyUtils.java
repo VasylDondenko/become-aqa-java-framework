@@ -12,10 +12,16 @@ public final class PropertyUtils {
 
     private static final Map<String, String> CONFIGMAP = new HashMap<>();
     private static Properties property = new Properties();
+    private static String env;
 
     static {
-        System.out.println("EnvUtils.env = " + EnvUtils.getEnv());
-        try (FileInputStream file = new FileInputStream("src/main/resources/" + EnvUtils.getEnv() + ".properties")) {
+        if (System.getProperty("env") != null) {
+            env = System.getProperty("env");
+        } else {
+            env = "qa";
+        }
+        System.out.println("Environment = " + env);
+        try (FileInputStream file = new FileInputStream("src/main/resources/" + env + ".properties")) {
             property.load(file);
             for (Map.Entry<Object, Object> entry : property.entrySet()) {
                 CONFIGMAP.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
