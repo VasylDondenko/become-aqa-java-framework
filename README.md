@@ -33,3 +33,11 @@ System variables override any other variables `mvn test -Denv=qa -Dname=SomeName
 
 `mvn test` - Default env is set to `dev`. If there is no necessary property provided as a system variable, not in the xml (if xml used to run tests) and not inside ***dev.properties*** - an Exception will be thrown.
 `mvn test -Denv=qa` - If there is no necessary property inside ***qa.properties*** - an Exception will be thrown.
+
+
+# DOCKER
+docker network create aqa-network
+docker network connect aqa-network keycloak-aqa
+
+docker build -t become-aqa-java .
+docker run --name become-aqa-java --volume `pwd`/reports:/app/reports --network aqa-network become-aqa-java test -DargLine="-Dkeycloak.baseUrl=http://keycloak-aqa:8080"

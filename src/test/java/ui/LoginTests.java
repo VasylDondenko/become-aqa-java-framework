@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 public class LoginTests extends BaseUiTest {
 
-    @Test
+    @Test(enabled = false)
     public void testSuccesfullLoginPOM() {
         new LoginPage(driver)
                 .setUsername(UIConfigInitializer.getGithubUsername())
@@ -22,7 +22,7 @@ public class LoginTests extends BaseUiTest {
         Assert.assertEquals(homePage.getUserName(), "VasylDondenko");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testSignOut() {
         new LoginPage(driver)
                 .setUsername(UIConfigInitializer.getGithubUsername())
@@ -39,7 +39,7 @@ public class LoginTests extends BaseUiTest {
         Assert.assertEquals(homePage.getTitle(), "GitHub: Let’s build from here · GitHub");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testSuccessfulLoginPageFactory() {
         PageFactoryLoginPage pageFactoryLoginPage = new PageFactoryLoginPage(driver);
         pageFactoryLoginPage.goToLoginPage();

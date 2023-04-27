@@ -15,6 +15,7 @@
     </properties>
 
     <build>
+        <finalName>become-aqa-framework</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -26,6 +27,7 @@
                         <include>**/*Tests.java</include>
                         <include>**/Test*.java</include>
                     </includes>
+                    <reportsDirectory>${project.basedir}/reports</reportsDirectory>
                 </configuration>
             </plugin>
         </plugins>
