@@ -1,29 +1,31 @@
 package applications.ui.pageObjects;
 
+import browsers.DriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.PropertyUtils;
 import utils.TimeoutUtils;
 
 import java.time.Duration;
 
 public class BasePage {
     private static final Logger logger = LogManager.getLogger(BasePage.class);
-    protected WebDriver driver;
     protected WebDriverWait wait;
 
-    public BasePage(WebDriver driver) {
-        //TODO Use driver instantly without providing in every Page and Test that is using Page object creation
-        this.driver = driver;
-        wait = new WebDriverWait(driver, Duration.ofSeconds(TimeoutUtils.getTimeOut()));
+    public BasePage() {
+        wait = new WebDriverWait(DriverManager.getDriver(), Duration.ofSeconds(TimeoutUtils.getTimeOut()));
+    }
+
+    protected void goTo(String endpoint) {
+        DriverManager.getDriver().get(PropertyUtils.get("github.ui.baseUrl") + endpoint);
     }
 
     protected String getTitle() {
-        String title = driver.getTitle();
+        String title = DriverManager.getDriver().getTitle();
         logger.info("Page title is: {}", title);
         return title;
     }

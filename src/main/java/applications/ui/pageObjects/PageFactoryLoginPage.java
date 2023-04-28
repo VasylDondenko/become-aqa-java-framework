@@ -1,12 +1,11 @@
 package applications.ui.pageObjects;
 
-import org.openqa.selenium.WebDriver;
+import browsers.DriverManager;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import utils.PropertyUtils;
 
 public final class PageFactoryLoginPage extends BasePage {
 
@@ -15,14 +14,13 @@ public final class PageFactoryLoginPage extends BasePage {
     @FindBy(how = How.NAME, using = "commit") WebElement btnCommit;
 
 
-    public PageFactoryLoginPage(WebDriver driver) {
-        super(driver);
-        PageFactory.initElements(driver, this);
+    public PageFactoryLoginPage() {
+        PageFactory.initElements(DriverManager.getDriver(), this);
     }
 
 
     public void goToLoginPage() {
-        driver.get(PropertyUtils.get("github.ui.baseUrl") + "/login");
+        goTo("/login");
     }
 
     public void setUsername(String username) {

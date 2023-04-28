@@ -20,12 +20,14 @@ public class JsonUtils {
             return tempNode != null;
         } catch (JSONException e) {
             logger.info("No node with name {} found", node);
+            logger.debug("JSONObject is: {}", json);
             return false;
         }
     }
 
     public static int countObjects(JSONArray json) {
-        logger.debug("{} json objects found", json.length());
+        logger.info("{} json objects found", json.length());
+        logger.debug("json array is: {}", json);
         return json.length();
     }
 

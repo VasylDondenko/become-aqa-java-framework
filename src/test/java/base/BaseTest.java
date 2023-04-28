@@ -1,4 +1,4 @@
-package api.base;
+package base;
 
 import org.testng.annotations.BeforeMethod;
 

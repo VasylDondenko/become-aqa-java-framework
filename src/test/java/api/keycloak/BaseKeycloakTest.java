@@ -1,6 +1,6 @@
 package api.keycloak;
 
-import api.base.BaseTest;
+import base.BaseTest;
 import configs.APIConfigInitializer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;

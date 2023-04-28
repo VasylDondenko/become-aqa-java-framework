@@ -81,6 +81,7 @@ public final class GithubApiClient {
     }
 
     public static JSONObject convertStringToJsonObject(String json) {
+        logger.debug(json);
         return new JSONObject(json);
     }
 

@@ -1,16 +1,12 @@
 package applications.ui.pageObjects;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 public final class HomePage extends BasePage {
     private final By btnMenu = new By.ByXPath("(//summary[@class='Header-link'])[2]");
     private final By btnSignOut = new By.ByCssSelector(".dropdown-signout");
     private final By signedInUsername = new By.ByXPath("//strong[@class='css-truncate-target']");
 
-    public HomePage(WebDriver driver) {
-        super(driver);
-    }
 
     public String getTitle() {
         return super.getTitle();
