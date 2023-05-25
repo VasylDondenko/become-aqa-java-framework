@@ -2,9 +2,8 @@ package api.github;
 
 import configs.APIGitHubConfigInitializer;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import users.GitHubUser;
-import applications.api.GithubApiClient;
+import applications.api.github.GithubApiClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;

@@ -1,4 +1,4 @@
-package applications.ui.pageObjects;
+package applications.ui.selenium;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

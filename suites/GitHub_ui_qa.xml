@@ -12,7 +12,7 @@
         <parameter name="github.ui.baseUrl" value="https://github.com"/>
 
         <classes>
-            <class name="ui.LoginTests">
+            <class name="ui.selenium.github.LoginTests">
                 <methods>
                     <include name="testSuccesfullLoginPOM" />
                     <include name="testSignOut" />

@@ -1,4 +1,4 @@
-package browsers;
+package browsers.selenium;
 
 import constants.DriverType;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,7 +14,7 @@ public final class Driver {
 
     public static void initDriver(String browser) {
         if (Objects.isNull(DriverManager.getDriver())) {
-            switch (DriverType.valueOf(browser)) {
+            switch (DriverType.valueOf(browser.toUpperCase())) {
                 case CHROME:
                     System.setProperty("webdriver.chrome.driver", "src/main/resources/drivers/chromedriver");
                     DriverManager.setDriver(new ChromeDriver());

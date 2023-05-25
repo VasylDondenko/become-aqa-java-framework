@@ -8,10 +8,10 @@ import utils.PropertyUtils;
 
 import java.io.IOException;
 
-import static applications.api.KeycloakApi.getAccessTokenInfo;
-import static applications.api.KeycloakApi.receiveAccessToken;
-import static applications.api.KeycloakApi.getValueFromJsonString;
-import static applications.api.KeycloakApi.getNewAccessTokenIfExpired;
+import static applications.api.keycloak.KeycloakApi.getAccessTokenInfo;
+import static applications.api.keycloak.KeycloakApi.receiveAccessToken;
+import static applications.api.keycloak.KeycloakApi.getValueFromJsonString;
+import static applications.api.keycloak.KeycloakApi.getNewAccessTokenIfExpired;
 
 public class BaseKeycloakTest extends BaseTest {
     String realm = PropertyUtils.get("keycloak.realmName");

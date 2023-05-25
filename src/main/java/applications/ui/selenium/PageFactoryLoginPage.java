@@ -1,6 +1,6 @@
-package applications.ui.pageObjects;
+package applications.ui.selenium;
 
-import browsers.DriverManager;
+import browsers.selenium.DriverManager;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;

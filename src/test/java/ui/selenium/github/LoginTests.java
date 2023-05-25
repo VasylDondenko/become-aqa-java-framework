@@ -1,13 +1,15 @@
-package ui;
+package ui.selenium.github;
 
-import applications.ui.pageObjects.HomePage;
-import applications.ui.pageObjects.LoginPage;
-import applications.ui.pageObjects.PageFactoryLoginPage;
+import applications.ui.selenium.HomePage;
+import applications.ui.selenium.LoginPage;
+import applications.ui.selenium.PageFactoryLoginPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ui.selenium.BaseTest;
 import utils.PropertyUtils;
 
-public class LoginTests extends BaseUiTest {
+public class LoginTests extends BaseTest {
+
 
     @Test
     public void testSuccesfullLoginPOM() {

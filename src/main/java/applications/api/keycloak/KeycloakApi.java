@@ -1,4 +1,4 @@
-package applications.api;
+package applications.api.keycloak;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

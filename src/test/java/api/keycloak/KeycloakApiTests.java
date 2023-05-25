@@ -1,13 +1,13 @@
 package api.keycloak;
 
-import applications.api.KeycloakApi;
+import applications.api.keycloak.KeycloakApi;
 import configs.APIConfigInitializer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import utils.PropertyUtils;
 import utils.StringUtils;
 
-import static applications.api.KeycloakApi.countUsers;
+import static applications.api.keycloak.KeycloakApi.countUsers;
 
 public class KeycloakApiTests extends BaseKeycloakTest{
     private String realm = PropertyUtils.get("keycloak.realmName");

@@ -1,4 +1,4 @@
-package applications.api;
+package applications.api.github;
 
 import exceptions.ConnectionException;
 import exceptions.EncodingException;

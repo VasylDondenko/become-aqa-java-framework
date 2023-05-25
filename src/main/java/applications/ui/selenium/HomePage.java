@@ -1,4 +1,4 @@
-package applications.ui.pageObjects;
+package applications.ui.selenium;
 
 import org.openqa.selenium.By;
 
